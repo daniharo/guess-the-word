@@ -27,6 +27,7 @@ const bot = new Bot(BOT_TOKEN); // <-- put your bot token between the ""
 bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
 // Handle other messages.
 bot.on("message:text", async (ctx) => {
+  await ctx.replyWithChatAction("typing");
   const completion = await openAI.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: ctx.message.text }],
