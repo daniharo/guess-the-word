@@ -15,12 +15,13 @@ if (!BOT_TOKEN) {
 //   throw new Error("OPENAI_API_KEY is not set");
 // }
 
-const bot = new Bot(BOT_TOKEN, { client: { canUseWebhookReply: () => false } });
+const bot = new Bot(BOT_TOKEN);
 
 // Handle the /start command.
 bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
 // Handle other messages.
 bot.on("message:text", async (ctx) => {
+  await ctx.replyWithChatAction("typing");
   const stream = await OpenAI("chat", {
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: ctx.message.text }],
