@@ -242,7 +242,8 @@
     "https://esm.sh/v117/yield-stream@3.0.0/dist/lib/edge.d.ts": "26bf21f6d121939ca24b35f2b67d36d644fb088d9947fcb7a1b5ec21f55e541e",
     "https://esm.sh/v117/yield-stream@3.0.0/dist/lib/shared.d.ts": "53e953680881cddfafda608b061233d4bd71571b6ac6080e682056d727fc6d31",
     "https://esm.sh/v117/yield-stream@3.0.0/dist/platforms/edge.d.ts": "7e7ae4b2d628857b49cc1f50cdebac97fa1491c8680b00d2bfd548c5984e5acb",
-    "https://esm.sh/v117/yield-stream@3.0.0/dist/types.d.ts": "995b39a207b71fbbaadd73719837269582ffd77e1dcc4840c39fa790714b57b3"
+    "https://esm.sh/v117/yield-stream@3.0.0/dist/types.d.ts": "995b39a207b71fbbaadd73719837269582ffd77e1dcc4840c39fa790714b57b3",
+    "https://esm.sh/yield-stream@3.0.0": "695eb4db07551cbd5b6429e923156e339d37d53ba99ac4e8c6fa1ee5c522a371"
   },
   "npm": {
     "specifiers": {

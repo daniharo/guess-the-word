@@ -2,6 +2,7 @@ import { Bot, webhookCallback } from "grammy/mod.ts";
 import { serve } from "http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 import { OpenAI } from "https://esm.sh/openai-streams";
+import { yieldStream } from "https://esm.sh/yield-stream";
 import type { Message } from "https://deno.land/x/grammy_types@v3.1.1/message.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
@@ -27,9 +28,10 @@ bot.on("message:text", async (ctx) => {
   });
   let res = "";
   let message: Message.TextMessage | null = null;
-  for await (const chunk of stream) {
+  for await (const chunk of yieldStream(stream)) {
     const decoded = new TextDecoder().decode(chunk);
     res += decoded;
+    console.log(res);
     if (!message) {
       message = await ctx.reply(res);
     } else {
