@@ -1,8 +1,8 @@
 import { Bot, webhookCallback } from "grammy/mod.ts";
+import { Message } from "grammy/types.ts";
 import { serve } from "http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 import { OpenAI } from "https://esm.sh/openai-streams@^5.1.1";
-import type { Message } from "https://deno.land/x/grammy_types@v3.1.1/message.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
 // const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
