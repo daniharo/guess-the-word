@@ -19,20 +19,32 @@ const bot = new Bot(BOT_TOKEN);
 const DECODER = new TextDecoder();
 
 // Handle the /start command.
-bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
-// Handle other messages.
+bot.command("start", (ctx) =>
+  ctx.reply("Send me a message and I'll correct it.")
+);
+// Handle text messages.
 bot.on("message:text", async (ctx) => {
   await ctx.replyWithChatAction("typing");
   const stream = await OpenAI("chat", {
     model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: ctx.message.text }],
-    max_tokens: 100,
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a spelling and grammar checker. Given a prompt, reply with the complete corrected prompt, nothing else.",
+      },
+      { role: "user", content: ctx.message.text },
+    ],
+    max_tokens: 500,
   });
   let res = "";
   let message: Message.TextMessage | null = null;
   for await (const chunk of stream) {
     const decoded = DECODER.decode(chunk);
     res += decoded;
+    if (!decoded.trim()) {
+      continue;
+    }
     if (!message) {
       message = await ctx.reply(res);
     } else {
