@@ -5,14 +5,10 @@ import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 import { OpenAI } from "https://esm.sh/openai-streams@^5.1.1";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
-// const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 if (!BOT_TOKEN) {
   throw new Error("BOT_TOKEN is not set");
 }
-// if (!OPENAI_API_KEY) {
-//   throw new Error("OPENAI_API_KEY is not set");
-// }
 
 const bot = new Bot(BOT_TOKEN);
 
@@ -20,7 +16,7 @@ const DECODER = new TextDecoder();
 
 // Handle the /start command.
 bot.command("start", (ctx) =>
-  ctx.reply("Send me a message and I'll correct it.")
+  ctx.reply("Hey! Send me a message in any language and I'll correct it 🥸")
 );
 // Handle text messages.
 bot.on("message:text", async (ctx) => {
