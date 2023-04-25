@@ -27,7 +27,7 @@ bot.on("message:text", async (ctx) => {
       {
         role: "system",
         content:
-          "You are a spelling and grammar checker. Given a prompt, reply with the complete corrected prompt in the same language and nothing else.",
+          "You are a spell and grammar checker. Given a prompt, reply only with the complete corrected prompt in the same language. Do not add clarification if the prompt is already correct.",
       },
       { role: "user", content: ctx.message.text },
     ],
@@ -38,6 +38,9 @@ bot.on("message:text", async (ctx) => {
   for await (const chunk of stream) {
     const decoded = DECODER.decode(chunk);
     res += decoded;
+    // If the trimmed chunk is empty, Bot API would throw an error because
+    // the new message is empty or the edited content is the same.
+    // Therefore we have to skip the chunk after saving.
     if (!decoded.trim()) {
       continue;
     }
