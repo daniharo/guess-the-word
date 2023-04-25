@@ -1,33 +1,41 @@
 import { Bot, webhookCallback } from "grammy/mod.ts";
 import { serve } from "http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
-import { OpenAI } from "openai/mod.ts";
+import { OpenAI } from "npm:openai-streams";
+import type { Message } from "https://deno.land/x/grammy_types@v3.1.1/message.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
-const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+// const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 if (!BOT_TOKEN) {
   throw new Error("BOT_TOKEN is not set");
 }
-if (!OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY is not set");
-}
+// if (!OPENAI_API_KEY) {
+//   throw new Error("OPENAI_API_KEY is not set");
+// }
 
-const openAI = new OpenAI(OPENAI_API_KEY);
-
-const bot = new Bot(BOT_TOKEN);
+const bot = new Bot(BOT_TOKEN, { client: { canUseWebhookReply: () => false } });
 
 // Handle the /start command.
 bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
 // Handle other messages.
 bot.on("message:text", async (ctx) => {
-  await ctx.replyWithChatAction("typing");
-  const completion = await openAI.createChatCompletion({
+  const stream = await OpenAI("chat", {
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: ctx.message.text }],
-    maxTokens: 100,
+    max_tokens: 100,
   });
-  return ctx.reply(completion.choices[0].message.content);
+  let res = "";
+  let message: Message.TextMessage | null = null;
+  for await (const chunk of stream) {
+    const decoded = new TextDecoder().decode(chunk);
+    res += decoded;
+    if (!message) {
+      message = await ctx.reply(res);
+    } else {
+      await ctx.api.editMessageText(message.chat.id, message.message_id, res);
+    }
+  }
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");
