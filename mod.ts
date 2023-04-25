@@ -1,7 +1,7 @@
 import { Bot, webhookCallback } from "grammy/mod.ts";
 import { serve } from "http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
-import { OpenAI } from "npm:openai-streams";
+import { OpenAI } from "https://esm.sh/openai-streams";
 import type { Message } from "https://deno.land/x/grammy_types@v3.1.1/message.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
