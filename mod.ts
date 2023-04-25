@@ -15,7 +15,9 @@ if (!BOT_TOKEN) {
 //   throw new Error("OPENAI_API_KEY is not set");
 // }
 
-const bot = new Bot(BOT_TOKEN);
+const bot = new Bot(BOT_TOKEN, {
+  client: { canUseWebhookReply: (method) => method === "sendChatAction" },
+});
 
 // Handle the /start command.
 bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
@@ -40,8 +42,6 @@ bot.on("message:text", async (ctx) => {
   }
 });
 
-const handleUpdate = webhookCallback(bot, "std/http");
-
 if (Deno.env.get("DEV") === "true") {
   try {
     bot.start();
@@ -50,6 +50,10 @@ if (Deno.env.get("DEV") === "true") {
     console.error("Could not start bot in development mode");
   }
 } else {
+  const handleUpdate = webhookCallback(bot, "std/http", {
+    timeoutMilliseconds: 25_000,
+  });
+
   serve(async (req) => {
     if (req.method === "POST") {
       const url = new URL(req.url);
