@@ -31,7 +31,6 @@ bot.on("message:text", async (ctx) => {
   for await (const chunk of yieldStream(stream)) {
     const decoded = new TextDecoder().decode(chunk);
     res += decoded;
-    console.log(res);
     if (!message) {
       message = await ctx.reply(res);
     } else {
