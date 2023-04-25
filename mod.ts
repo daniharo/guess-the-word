@@ -1,10 +1,7 @@
-import {
-  Bot,
-  webhookCallback,
-} from "https://deno.land/x/grammy@v1.15.3/mod.ts";
-import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
+import { Bot, webhookCallback } from "grammy/mod.ts";
+import { serve } from "http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
-import { OpenAI } from "https://deno.land/x/openai@1.3.1/mod.ts";
+import { OpenAI } from "openai/mod.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
@@ -18,10 +15,7 @@ if (!OPENAI_API_KEY) {
 
 const openAI = new OpenAI(OPENAI_API_KEY);
 
-// Create an instance of the `Bot` class and pass your bot token to it.
-const bot = new Bot(BOT_TOKEN); // <-- put your bot token between the ""
-// You can now register listeners on your bot object `bot`.
-// grammY will call the listeners when users send messages to your bot.
+const bot = new Bot(BOT_TOKEN);
 
 // Handle the /start command.
 bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
@@ -35,9 +29,6 @@ bot.on("message:text", async (ctx) => {
   });
   return ctx.reply(completion.choices[0].message.content);
 });
-
-// Now that you specified how to handle messages, you can start your bot.
-// This will connect to the Telegram servers and wait for messages.
 
 const handleUpdate = webhookCallback(bot, "std/http");
 
