@@ -7,7 +7,7 @@ import { OpenAI } from "https://esm.sh/openai-streams@^5.1.1";
 const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
 
 if (!isDenoDeploy) {
-  await load();
+  await load({ export: true });
 }
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
@@ -33,7 +33,7 @@ bot.on("message:text", async (ctx) => {
       {
         role: "system",
         content:
-          "You are a spelling and grammar checker. Given a prompt, reply with the complete corrected prompt, nothing else.",
+          "You are a spelling and grammar checker. Given a prompt, reply with the complete corrected prompt in the same language and nothing else.",
       },
       { role: "user", content: ctx.message.text },
     ],
