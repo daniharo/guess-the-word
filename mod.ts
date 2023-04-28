@@ -10,9 +10,10 @@ import { serve } from "http/server.ts";
 import {
   OpenAI,
   type ChatCompletionRequestMessage,
-} from "https://esm.sh/openai-streams@^5.1.1";
+} from "https://esm.sh/openai-streams@5.1.1";
 import "dotenv/load.ts";
 import { freeStorage } from "https://deno.land/x/grammy_storages@v2.2.0/free/src/mod.ts";
+import { throttle } from "https://esm.sh/throttle-debounce@5.0.0";
 
 type SessionData = {
   imitating: string | null;
@@ -53,7 +54,7 @@ bot.command("imitate", async (ctx) => {
   ctx.session.messages = [
     {
       role: "system",
-      content: `From now on, you are ${who}. You have to talk and act as if you are ${who}.`,
+      content: `From now on, you are not an AI. You are ${who}. You have to talk and act as if you are ${who}.`,
     },
   ];
   await ctx.reply(`I'm now imitating ${who}`);
@@ -73,6 +74,11 @@ bot.on("message:text", async (ctx) => {
     messages: [...messages, { role: "user", content: ctx.message.text }],
     max_tokens: 500,
   });
+  const throttledEdit = throttle(
+    300,
+    (chatId: number, messageId: number, text: string) =>
+      ctx.api.editMessageText(chatId, messageId, text)
+  );
   let res = "";
   let message: Message.TextMessage | null = null;
   for await (const chunk of stream) {
@@ -87,7 +93,7 @@ bot.on("message:text", async (ctx) => {
     if (!message) {
       message = await ctx.reply(res);
     } else {
-      await ctx.api.editMessageText(message.chat.id, message.message_id, res);
+      throttledEdit(message.chat.id, message.message_id, res);
     }
   }
   ctx.session.messages = [
