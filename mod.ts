@@ -74,6 +74,7 @@ bot.on("message:text", async (ctx) => {
     messages: [...messages, { role: "user", content: ctx.message.text }],
     max_tokens: 500,
   });
+  // Edit throttled so that Telegram won't stop the requests.
   const throttledEdit = throttle(
     300,
     (chatId: number, messageId: number, text: string) =>
